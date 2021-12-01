@@ -1,28 +1,60 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <flow-form v-bind:questions="questions" v-bind:progressbar="true" @answer="onAnswer" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import FlowForm, {
+  QuestionModel,
+  QuestionType,
+  ChoiceOption,
+} from "@ditdot-dev/vue-flow-form";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    FlowForm,
+  },
+  data() {
+    return {
+      questions: [
+        // QuestionModel array
+        new QuestionModel({
+          title: "Question",
+          type: QuestionType.MultipleChoice,
+          multiple: false,
+          required: true,
+          options: [
+            new ChoiceOption({
+              label: "Answer 1",
+              correct: true
+            }),
+            new ChoiceOption({
+              label: "Answer 2",
+            }),
+            new ChoiceOption({
+              label: "Answer 3",
+            }),
+            new ChoiceOption({
+              label: "Answer 4",
+            }),
+          ],
+        }),
+      ],
+    };
+  },
+  methods: {
+    onAnswer(questionAnswered) {
+      console.log(questionAnswered);
+    }
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+/* Import Vue Flow Form base CSS */
+@import "~@ditdot-dev/vue-flow-form/dist/vue-flow-form.css";
+/* Import one of the Vue Flow Form CSS themes (optional) */
+@import "~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-minimal.css";
+/* @import '~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-green.css'; */
+/* @import '~@ditdot-dev/vue-flow-form/dist/vue-flow-form.theme-purple.css'; */
 </style>
