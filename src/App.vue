@@ -1,50 +1,69 @@
 <template>
   <div>
-    <div id="header">Carmona Quiz</div>
+    <div id="header">
+      Carmona Quiz
+    </div>
     <flow-form
-      v-bind:questions="questions"
-      v-bind:progressbar="true"
+      v-if="formFound"
+      ref="flowform"
+      :questions="questions"
+      :progressbar="true"
+      :language="language"
+      :standalone="true"
+      :timer="true"
       @submit="onSubmit"
       @complete="onComplete"
       @timer="onTimer"
-      v-bind:language="language"
-      v-bind:standalone="true"
-      v-bind:timer="true"
-      ref="flowform"
-      v-if="formFound"
     >
-      <template v-slot:complete>
+      <template #complete>
         <p>
-          <span class="fh2">Bra jobbat!</span>
-          <span v-if="!submitted" class="f-section-text">
+          <span
+            class="fh2"
+          >Bra jobbat!</span>
+          <span
+            v-if="!submitted"
+            class="f-section-text"
+          >
             Du kan gå tillbaka och ändra dina svar eller klicka på nästa för att
             få ditt resultat :)
           </span>
         </p>
       </template>
 
-      <template v-slot:completeButton>
-        <div class="f-submit" v-if="!submitted">
+      <template #completeButton>
+        <div
+          v-if="!submitted"
+          class="f-submit"
+        >
           <button
-            class="o-btn-action"
             ref="button"
+            class="o-btn-action"
             type="submit"
             href="#"
-            v-on:click.prevent="onSubmit()"
             aria-label="Press to submit"
+            @click.prevent="onSubmit()"
           >
             <span>Nästa</span>
           </button>
         </div>
-        <p class="text-success" v-if="submitted && time">
+        <p 
+          v-if="submitted && time"
+          class="text-success"
+        >
           Din tid: {{ formattedTime }}
         </p>
-        <p class="text-success" v-if="submitted">
+        <p
+          v-if="submitted"
+          class="text-success"
+        >
           Du fick {{ score }} av {{ total }} rätt.
         </p>
       </template>
     </flow-form>
-    <div id="no-form" v-else>
+    <div
+      v-else
+      id="no-form"
+    >
       <div>No form found!</div>
     </div>
   </div>
@@ -64,11 +83,6 @@ export default {
   name: "App",
   components: {
     FlowForm,
-  },
-  mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const formId = urlParams.get("formId");
-    this.getForm(formId);
   },
   data() {
     return {
@@ -108,6 +122,11 @@ export default {
       }),
       questions: [],
     };
+  },
+  mounted() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const formId = urlParams.get("formId");
+    this.getForm(formId);
   },
   methods: {
     onSubmit() {
