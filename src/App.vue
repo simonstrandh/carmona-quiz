@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="header">
-      Carmona Quiz
+      Carmona Quiz ({{ displayName }})
     </div>
     <flow-form
       v-if="formFound"
@@ -61,10 +61,14 @@
       </template>
     </flow-form>
     <div
-      v-else
+      v-else-if="!displayName"
       id="no-form"
     >
-      <div>No form found!</div>
+      <UserName />
+    </div>
+    <div v-else>
+      <input type="text" placeholder="Code">
+      <button>Gå med i Quiz</button>
     </div>
   </div>
 </template>
@@ -77,12 +81,23 @@ import FlowForm, {
   LanguageModel,
 } from "@ditdot-dev/vue-flow-form";
 
+import UserName from "@/components/UserName";
+
+import {
+  onAuthStateChanged,
+  signInAnonymously,
+  updateProfile,
+} from "firebase/auth";
+
+import { firebaseAuth } from "./db"
+
 import quiz from "./forms/quiz.json";
 
 export default {
   name: "App",
   components: {
     FlowForm,
+    UserName
   },
   data() {
     return {
@@ -121,12 +136,18 @@ export default {
         ariaTypeAnswer: "Skriv ditt svar här",
       }),
       questions: [],
+      displayName: ""
     };
   },
+  computed: {
+
+  },
   mounted() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const formId = urlParams.get("formId");
-    this.getForm(formId);
+    onAuthStateChanged(firebaseAuth, (user) => {
+      if (user) {
+        this.displayName = user.displayName;
+      }
+    });
   },
   methods: {
     onSubmit() {
@@ -154,8 +175,7 @@ export default {
       console.log(questionList);
       this.completed = completed;
     },
-    getForm(formId) {
-      let form = quiz[formId];
+    beginQuiz(form) {
       this.total = form.questions.length;
       if (form) {
         this.questions.push(
